@@ -54,6 +54,3 @@ Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->
 Route::get('/register', [App\Http\Controllers\AuthController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
 
-// Details
-Route::get('/details', [DetailsController::class, 'index'])->name('details.index');
-Route::post('details/store', [DetailsController::class, 'store'])->name('details.store');
