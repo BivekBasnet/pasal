@@ -19,9 +19,41 @@
     <style>
         body {
             overflow-x: hidden;
+            min-height: 100vh;
         }
         .main-wrapper {
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+        @media (max-width: 767.98px) {
+            .main-content {
+                padding-top: 60px;
+            }
+            .content-center {
+                min-height: calc(100vh - 80px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .card {
+                width: 100%;
+                margin: 1rem;
+            }
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
         }
         @yield('css')
     </style>
@@ -29,7 +61,7 @@
 <body>
     @if (in_array(Route::currentRouteName(), ['login', 'register']))
         <div class="container-fluid">
-            <div class="row justify-content-center">
+            <div class="row justify-content-center align-items-center min-vh-100">
                 <div class="col-md-6 p-4">
                     @yield('content')
                 </div>
@@ -44,8 +76,12 @@
                 @include('sidebar')
 
                 <!-- Main Content -->
-                <div class="flex-grow-1 p-3">
-                    @yield('content')
+                <div class="content-wrapper">
+                    <div class="main-content">
+                        <div class="content-center">
+                            @yield('content')
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -57,6 +93,5 @@
             </form>
         @endif
     @endif
-    @stack('scripts')
 </body>
 </html>

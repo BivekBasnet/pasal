@@ -42,7 +42,7 @@
     #sidebarMenu {
         position: fixed;
         left: 0;
-        top: 0;
+        top: 30px;
         transform: translateX(-100%);
         z-index: 1050;
     }
