@@ -19,5 +19,8 @@
         <li class="nav-item mb-2">
             <a class="nav-link" href="{{ route('transictions.day') }}">📅 Day Purchase</a>
         </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link" href="{{ route('details.index') }}">📋 Details</a>
+        </li>
     </ul>
 </div>
