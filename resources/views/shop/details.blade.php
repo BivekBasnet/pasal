@@ -24,9 +24,9 @@
             <hr>
             <h5 class="mt-4">All Details</h5>
             <ul class="list-group">
-                <!-- Example static details, replace with dynamic listing -->
-                <li class="list-group-item">Detail 1: Value 1</li>
-                <li class="list-group-item">Detail 2: Value 2</li>
+                @foreach($details as $detail)
+                    <li class="list-group-item">{{ $detail->detail_name }}: {{ $detail->detail_value }}</li>
+                @endforeach
             </ul>
         </div>
     </div>

@@ -11,8 +11,8 @@ class DetailsController extends Controller
 {
     public function index()
     {
-        // For now, just return the view. You can add logic to fetch details from DB later.
-        return view('shop.details');
+        $details = Detail::all();
+        return view('shop.details', compact('details'));
     }
     function store(Request $request)
     {
