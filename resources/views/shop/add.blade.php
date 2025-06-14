@@ -40,14 +40,6 @@
             </form>
 
             <script>
-            document.getElementById('customerForm').addEventListener('submit', function(e) {
-                // Let the form submit normally, but after submit, show the success message if redirected with success
-                setTimeout(function() {
-                    const alert = document.querySelector('.alert-success');
-                    if (alert) setTimeout(() => alert.remove(), 3000);
-                }, 100);
-            });
-
             // Auto-dismiss all alerts after 3 seconds
             document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(function() {
