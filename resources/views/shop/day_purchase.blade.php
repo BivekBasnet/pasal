@@ -33,7 +33,7 @@
                                 <td>{{ $p->details }}</td>
                                 <td>{{ number_format($p->sellamount, 2) }}</td>
                                 <td>{{ number_format($p->paymentamount, 2) }}</td>
-                                <td>{{ $p->customer->name ?? '-' }}</td>
+                                <td>{{ $p->customer->c_name ?? '-' }}</td>
                             </tr>
                         @endforeach
                     </tbody>

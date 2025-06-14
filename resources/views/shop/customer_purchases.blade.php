@@ -71,6 +71,15 @@ document.getElementById('customer_id').addEventListener('change', function() {
             document.getElementById('balance').value = '';
         });
 });
+
+// Auto-dismiss all alerts after 3 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        document.querySelectorAll('.alert').forEach(function(alert) {
+            alert.remove();
+        });
+    }, 3000);
+});
 </script>
 @endpush
 @endsection

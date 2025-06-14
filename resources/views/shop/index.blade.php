@@ -16,6 +16,9 @@
                     </ul>
                 </div>
             @endif
+            @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
             <form id="transictionForm" method="POST" action="{{ route('transictions.store') }}" autocomplete="on">
 
                 @csrf
@@ -87,6 +90,15 @@
                         document.querySelector('.card-body').insertAdjacentHTML('afterbegin', errorHtml);
                     }
                 });
+            });
+
+            // Auto-dismiss all alerts after 3 seconds
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(function() {
+                    document.querySelectorAll('.alert').forEach(function(alert) {
+                        alert.remove();
+                    });
+                }, 3000);
             });
             </script>
 

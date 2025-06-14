@@ -16,6 +16,9 @@
                     </ul>
                 </div>
             @endif
+            @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
             <form method="POST" action="{{ route('register') }}">
                 @csrf
                 <div class="mb-3">
@@ -40,4 +43,14 @@
         </div>
     </div>
 </div>
+<script>
+    // Auto-dismiss all alerts after 3 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            document.querySelectorAll('.alert').forEach(function(alert) {
+                alert.remove();
+            });
+        }, 3000);
+    });
+</script>
 @endsection
