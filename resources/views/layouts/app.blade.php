@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>@yield('title', 'Bijay Kirana Pasal')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Select2 CSS -->
@@ -13,7 +15,16 @@
     <!-- Axios CDN -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script> @yield('jssss') </script>
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+        .main-wrapper {
+            min-height: 100vh;
+        }
+        @yield('css')
+    </style>
 </head>
 <body>
     @if (in_array(Route::currentRouteName(), ['login', 'register']))
@@ -25,26 +36,26 @@
             </div>
         </div>
     @else
-        <div class="container-fluid">
-            <div class="row">
+        <button id="sidebarToggle" class="btn btn-primary d-md-none m-2" style="position: fixed; top: 20px; left: 20px; z-index: 1100;">☰ Menu</button>
+
+        <div class="main-wrapper">
+            <div class="d-flex">
                 <!-- Sidebar -->
-                <div class="col-md-2 bg-light p-3" style="min-height: 100vh;">
-                    @include('sidebar')
-                </div>
+                @include('sidebar')
 
                 <!-- Main Content -->
-                <div class="col-md-9 p-4">
+                <div class="flex-grow-1 p-3">
                     @yield('content')
                 </div>
             </div>
         </div>
-    @endif
 
-    @if (!in_array(Route::currentRouteName(), ['login', 'register']))
-        <form action="{{ route('logout') }}" method="POST" style="position: absolute; top: 20px; right: 30px; z-index: 999;">
-            @csrf
-            <button type="submit" class="btn btn-danger btn-sm">Logout</button>
-        </form>
+        @if (!in_array(Route::currentRouteName(), ['login', 'register']))
+            <form action="{{ route('logout') }}" method="POST" style="position: fixed; top: 20px; right: 30px; z-index: 999;">
+                @csrf
+                <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+            </form>
+        @endif
     @endif
     @stack('scripts')
 </body>

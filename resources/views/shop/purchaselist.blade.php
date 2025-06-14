@@ -4,8 +4,8 @@
 
 @section('content')
 
-<div class="container py-4">
-    <div class="card shadow-sm rounded-4 mx-auto" style="max-width: 700px;">
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-sm rounded-4" style="max-width: 700px; width: 100%;">
         <div class="card-body p-4">
             <h4 class="mb-4 text-primary text-center fw-semibold">Transactions List</h4>
             <div class="table-responsive">
@@ -45,4 +45,5 @@
         </div>
     </div>
 </div>
+
 @endsection

@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="container py-5">
-    <div class="card shadow rounded-4 mx-auto" style="max-width: 600px;">
-        <div class="card-body p-4">
+    <div class="card shadow rounded-4 mx-auto w-100" style="max-width: 600px;">
+        <div class="container py-3 py-md-5">
             <h3 class="mb-4 text-center text-primary">Add New customer</h3>
 
             @if ($errors->any())
@@ -47,6 +47,15 @@
                         alert.remove();
                     });
                 }, 3000);
+            });
+
+            document.getElementById('sidebarToggle').addEventListener('click', function () {
+                const sidebar = document.getElementById('sidebarMenu');
+                if (sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                } else {
+                    sidebar.classList.add('show');
+                }
             });
             </script>
         </div>
