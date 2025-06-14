@@ -26,14 +26,27 @@ class TransictionsController extends Controller
         $transictions->sellamount = $request->sellamount;
         $transictions->customer_id = $request->customer_id;
         $transictions->save();
-        return redirect()->back();
+
+        // Reload the transaction with the customer relationship
+        $transictions->load('customer');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Transaction saved successfully!',
+            'transaction' => $transictions
+        ]);
+
     }
 
     function add(){
         $customers = Customers::all();
         $today = date('Y-m-d');
-        $todayTransictions = transictions::where('date', $today)->with('customer')->get();
-        return view('shop.index', compact('customers', 'today', 'todayTransictions'));
+        $todayTransactions = transictions::where('date', $today)
+            ->with('customer')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('shop.index', compact('customers', 'today', 'todayTransactions'));
     }
 
     function list(){
@@ -47,7 +60,20 @@ class TransictionsController extends Controller
         if ($transictions) {
             $transictions->delete();
         }
-    return redirect()->back();
+        return redirect()->back();
+    }
+
+    public function customerDetails($customerId) {
+        $customer = Customers::findOrFail($customerId);
+        $transactions = transictions::where('customer_id', $customerId)
+            ->orderBy('date', 'desc')
+            ->get();
+
+        $totalSales = $transactions->sum('sellamount');
+        $totalPayments = $transactions->sum('paymentamount');
+        $balance = $totalSales - $totalPayments;
+
+        return view('shop.customer-details', compact('customer', 'transactions', 'totalSales', 'totalPayments', 'balance'));
     }
 
     public function customerPurchasesPage()

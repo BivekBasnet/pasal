@@ -57,54 +57,45 @@
                     <button type="submit" class="btn btn-lg" style="background-color: #6f42c1; color: #fff;" id="submitBtn">Save Transictions</button>
                 </div>
             </form>
+        </div>
+    </div>
 
-            <script>
-            document.getElementById('transictionForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const form = e.target;
-                const formData = new FormData(form);
-                document.getElementById('submitBtn').disabled = true;
-                axios.post("{{ route('transictions.store') }}", formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                .then(response => {
-                    form.reset();
-                    document.getElementById('submitBtn').disabled = false;
-                    // Show success alert and auto-dismiss after 3 seconds
-                    const alert = document.createElement('div');
-                    alert.className = 'alert alert-success';
-                    alert.textContent = 'Transaction saved successfully!';
-                    document.querySelector('.card-body').insertAdjacentElement('afterbegin', alert);
-                    setTimeout(() => alert.remove(), 3000);
-                })
-                .catch(error => {
-                    document.getElementById('submitBtn').disabled = false;
-                    if (error.response && error.response.data && error.response.data.errors) {
-                        let errors = error.response.data.errors;
-                        let errorHtml = '<div class="alert alert-danger"><ul>';
-                        Object.values(errors).forEach(errArr => {
-                            errArr.forEach(err => {
-                                errorHtml += `<li>${err}</li>`;
-                            });
-                        });
-                        errorHtml += '</ul></div>';
-                        document.querySelector('.card-body').insertAdjacentHTML('afterbegin', errorHtml);
-                    }
-                });
-            });
-
-            // Auto-dismiss all alerts after 3 seconds
-            document.addEventListener('DOMContentLoaded', function() {
-                setTimeout(function() {
-                    document.querySelectorAll('.alert').forEach(function(alert) {
-                        alert.remove();
-                    });
-                }, 3000);
-            });
-            </script>
-
+    <!-- Today's Transactions Table -->
+    <div class="card shadow rounded-4 mx-auto mt-4">
+        <div class="card-body p-4">
+            <h4 class="mb-4 text-primary">Today's Transactions</h4>
+            <div class="table-responsive">
+                <table class="table table-hover" id="todayTransactions">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Details</th>
+                            <th>Sale Amount</th>
+                            <th>Payment</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($todayTransactions as $transaction)
+                        <tr>
+                            <td>{{ $transaction->customer->c_name }}</td>
+                            <td>{{ $transaction->details }}</td>
+                            <td>₨ {{ number_format($transaction->sellamount, 2) }}</td>
+                            <td>₨ {{ number_format($transaction->paymentamount, 2) }}</td>
+                            <td>{{ $transaction->created_at->format('h:i A') }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-info">
+                            <td colspan="2"><strong>Total</strong></td>
+                            <td><strong>₨ {{ number_format($todayTransactions->sum('sellamount'), 2) }}</strong></td>
+                            <td><strong>₨ {{ number_format($todayTransactions->sum('paymentamount'), 2) }}</strong></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -118,6 +109,84 @@
             allowClear: true,
             width: '100%'
         });
+    });
+
+    document.getElementById('transictionForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        document.getElementById('submitBtn').disabled = true;
+
+        axios.post("{{ route('transictions.store') }}", formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then(response => {
+            // Add new row to table
+            const transaction = response.data.transaction;
+            if (!transaction || !transaction.customer) {
+                console.error('Invalid transaction data received:', transaction);
+                throw new Error('Invalid transaction data received');
+            }
+
+            const newRow = `
+                <tr>
+                    <td>${transaction.customer.c_name}</td>
+                    <td>${transaction.details}</td>
+                    <td>₨ ${parseFloat(transaction.sellamount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>₨ ${parseFloat(transaction.paymentamount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>${new Date(transaction.created_at).toLocaleTimeString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true})}</td>
+                </tr>`;
+
+            $('#todayTransactions tbody').prepend(newRow);
+
+            // Update totals
+            const currentSaleTotal = parseFloat($('#todayTransactions tfoot td:eq(2)').text().replace('₨ ', '').replace(/,/g, ''));
+            const currentPaymentTotal = parseFloat($('#todayTransactions tfoot td:eq(3)').text().replace('₨ ', '').replace(/,/g, ''));
+
+            const newSaleTotal = currentSaleTotal + parseFloat(transaction.sellamount);
+            const newPaymentTotal = currentPaymentTotal + parseFloat(transaction.paymentamount);
+
+            $('#todayTransactions tfoot td:eq(2)').html(`<strong>₨ ${newSaleTotal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong>`);
+            $('#todayTransactions tfoot td:eq(3)').html(`<strong>₨ ${newPaymentTotal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong>`);
+
+            // Reset form and show success message
+            form.reset();
+            $('#customer_id').val('').trigger('change');
+            document.getElementById('submitBtn').disabled = false;
+
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.textContent = 'Transaction saved successfully!';
+            document.querySelector('.card-body').insertAdjacentElement('afterbegin', alert);
+            setTimeout(() => alert.remove(), 3000);
+        })
+        .catch(error => {
+            console.log(error);
+
+            document.getElementById('submitBtn').disabled = false;
+            if (error.response && error.response.data && error.response.data.errors) {
+                let errors = error.response.data.errors;
+                let errorHtml = '<div class="alert alert-danger"><ul>';
+                Object.values(errors).forEach(errArr => {
+                    errArr.forEach(err => {
+                        errorHtml += `<li>${err}</li>`;
+                    });
+                });
+                errorHtml += '</ul></div>';
+                document.querySelector('.card-body').insertAdjacentHTML('afterbegin', errorHtml);
+            }
+        });
+    });
+
+    // Auto-dismiss all alerts after 3 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            document.querySelectorAll('.alert').forEach(function(alert) {
+                alert.remove();
+            });
+        }, 3000);
     });
 </script>
 @endpush

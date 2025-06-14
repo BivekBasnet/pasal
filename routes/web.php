@@ -44,6 +44,9 @@ Route::get('/customer/purchases', [TransictionsController::class, 'customerPurch
 // API for purchases of a customer
 Route::get('/customer/purchases/{customer}', [TransictionsController::class, 'customerPurchases']);
 
+// Customer Details route
+Route::get('/customer/{id}/details', [TransictionsController::class, 'customerDetails'])->name('customer.details');
+
 
 // Authentication routes
 Route::get('/login', [App\Http\Controllers\AuthController::class, 'showLoginForm'])->name('login');
