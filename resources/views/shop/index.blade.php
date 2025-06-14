@@ -23,12 +23,15 @@
 
                 @csrf
 
-                <select name="customer_id" id="customer_id" required class="color">
-                    <option value="">-- Select Customer --</option>
-                    @foreach($customers as $customer)
-                        <option value="{{ $customer->id }}">{{ $customer->c_name }}</option>
-                    @endforeach
-                </select>
+                <div class="mb-3">
+                    <label for="customer_id" class="form-label">Customer</label>
+                    <select name="customer_id" id="customer_id" class="form-select" required>
+                        <option value="">-- Select Customer --</option>
+                        @foreach($customers as $customer)
+                            <option value="{{ $customer->id }}">{{ $customer->c_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
                 <div class="mb-3">
                     <label for="details" class="form-label">Details</label>
@@ -106,4 +109,16 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#customer_id').select2({
+            placeholder: "-- Select Customer --",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
+@endpush
 
