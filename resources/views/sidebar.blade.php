@@ -1,5 +1,7 @@
 <div id="sidebarMenu" class="sidebar p-3 shadow bg-light">
-    <h4 class="mb-4"></h4>
+    <h4 class="mb-4 text-center fw-bold bkp-title">
+    <a href="{{ route('home') }}" class="text-decoration-none text-dark">BKP</a>
+</h4>
     <ul class="nav flex-column">
         <li class="nav-item mb-2">
             <a class="nav-link" href="{{ route('customers.add') }}">➕ Add New Customer</a>
@@ -23,6 +25,15 @@
 </div>
 
 <style>
+.bkp-title a {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.bkp-title a:hover {
+    color: #0d6efd !important;
+}
+
 #sidebarMenu {
     width: 280px;
     height: 100vh;

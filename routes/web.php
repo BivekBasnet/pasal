@@ -11,9 +11,43 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/home', function () {
-    $customers = Customers::all();
-    return view('shop.index', compact('customers'));
+Route::get('/home', function () {    // Today's statistics
+    $todaysSales = \App\Models\transictions::whereDate('created_at', now())->sum('sellamount');
+    $todaysPayments = \App\Models\transictions::whereDate('created_at', now())->sum('paymentamount');
+    $todaysTransactions = \App\Models\transictions::whereDate('created_at', now())->count();
+
+    // This month's statistics
+    $thisMonthSales = \App\Models\transictions::whereMonth('created_at', now()->month)->sum('sellamount');
+    $thisMonthPayments = \App\Models\transictions::whereMonth('created_at', now()->month)->sum('paymentamount');
+
+    // Overall statistics
+    $totalTransactions = \App\Models\transictions::count();
+    $totalCustomers = \App\Models\customers::count();
+    $totalSales = \App\Models\transictions::sum('sellamount');
+    $totalPayments = \App\Models\transictions::sum('paymentamount');
+    $pendingAmount = $totalSales - $totalPayments;
+
+    // Top customers
+    $topCustomers = \App\Models\transictions::selectRaw('customer_id, SUM(sellamount) as total_purchases')
+        ->with('customer')
+        ->groupBy('customer_id')
+        ->orderByDesc('total_purchases')
+        ->limit(5)
+        ->get();
+
+    return view('shop.home', compact(
+        'totalTransactions',
+        'totalCustomers',
+        'totalSales',
+        'totalPayments',
+        'todaysSales',
+        'todaysPayments',
+        'todaysTransactions',
+        'thisMonthSales',
+        'thisMonthPayments',
+        'pendingAmount',
+        'topCustomers'
+    ));
 })->name('home');
 
 
