@@ -16,8 +16,8 @@ class TransictionsController extends Controller
         $request->validate([
             'date' => 'required|date',
             'details' => 'required|string|max:255',
-            'paymentamount' => 'required|numeric',
-            'sellamount' => 'required|numeric',
+            'paymentamount' => 'required|numeric|min:0|max:9999999999.99',
+            'sellamount' => 'required|numeric|min:0|max:9999999999.99',
             'customer_id' => 'required|exists:customers,id',
         ]);
 

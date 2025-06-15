@@ -27,6 +27,11 @@
 
                         <!-- Customer and Date Row -->
                         <div class="row g-2 mb-3">
+                            <div class="col-4">
+                                <label for="date" class="form-label">Date</label>
+                                <input type="date" class="form-control form-control-sm" id="date" name="date"
+                                    value="{{ old('date', $today ?? date('Y-m-d')) }}" required>
+                            </div>
                             <div class="col-8">
                                 <label for="customer_id" class="form-label">Customer</label>
                                 <select name="customer_id" id="customer_id" class="form-select form-select-sm" required >
@@ -37,11 +42,7 @@
 
                                 </select>
                             </div>
-                            <div class="col-4">
-                                <label for="date" class="form-label">Date</label>
-                                <input type="date" class="form-control form-control-sm" id="date" name="date"
-                                    value="{{ old('date', $today ?? date('Y-m-d')) }}" required>
-                            </div>
+
                         </div>
 
                         <!-- Details Row -->
@@ -51,9 +52,9 @@
                                 placeholder="Details" required></textarea>
                         </div>
 
-                        <!-- Amount Row -->
-                        <div class="row g-2 mb-3">
-                            <div class="col-6">
+                        <!-- Amount Row with Save Button -->
+                        <div class="row g-2 mb-3 align-items-end">
+                            <div class="col-md-4">
                                 <label for="sellamount" class="form-label">Sell Amount</label>
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text">₨</span>
@@ -61,7 +62,7 @@
                                         name="sellamount" placeholder="0.00" step="0.01" min="0" required>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-4">
                                 <label for="paymentamount" class="form-label">Payment Amount</label>
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text">₨</span>
@@ -69,10 +70,9 @@
                                         name="paymentamount" placeholder="0.00" step="0.01" min="0" required>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-lg" style="background-color: #6f42c1; color: #fff;" id="submitBtn">Save Transictions</button>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn w-100" style="background-color: #6f42c1; color: #fff;" id="submitBtn">Save Transictions</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -183,6 +183,15 @@
     .btn-lg {
         padding: 0.5rem 1rem;
         font-size: 1rem;
+    }
+    .col-md-4 {
+        width: 33.33%;
+        flex: 0 0 auto;
+    }
+    #submitBtn {
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+        height: 31px;
     }
 }
 </style>
