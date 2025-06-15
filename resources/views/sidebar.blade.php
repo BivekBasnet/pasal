@@ -5,6 +5,13 @@
 
     <ul class="nav flex-column">
         <li class="nav-item mb-2">
+            <a class="nav-link d-flex align-items-center {{ request()->routeIs('home') ? 'active' : '' }}"
+               href="{{ route('home') }}">
+                <span class="nav-icon">🏠</span>
+                <span class="ms-2">Home</span>
+            </a>
+        </li>
+        <li class="nav-item mb-2">
             <a class="nav-link d-flex align-items-center {{ request()->routeIs('customers.add') ? 'active' : '' }}"
                href="{{ route('customers.add') }}">
                 <span class="nav-icon">➕</span>

@@ -2,6 +2,9 @@
     <h4 class="mb-4"></h4>
     <ul class="nav flex-column">
         <li class="nav-item mb-2">
+            <a class="nav-link" href="{{ route('home') }}">🏠 Home</a>
+        </li>
+        <li class="nav-item mb-2">
             <a class="nav-link" href="{{ route('customers.add') }}">➕ Add New Customer</a>
         </li>
         <li class="nav-item mb-2">

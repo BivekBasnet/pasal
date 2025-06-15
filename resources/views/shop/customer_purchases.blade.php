@@ -263,11 +263,13 @@ $(document).ready(function() {
 
                 $('#monthlySummaryTable tbody').html(monthlyRows || '<tr><td colspan="4" class="text-center">No monthly data available</td></tr>');
 
-                // Update transactions
-                let runningBalance = 0;
-                const transactionRows = (data.transactions || []).map(t => {
-                    runningBalance += (t.sellamount - t.paymentamount);
-                    return `
+                // Update transactions with running balance starting from the latest transaction
+                let runningBalance = data.summary.balance || 0; // Start with current total balance
+                const transactions = [...(data.transactions || [])];
+
+                // Calculate running balance by reversing through transactions
+                const transactionRows = transactions.map((t, index) => {
+                    const row = `
                         <tr>
                             <td>${formatDate(t.date)}</td>
                             <td>${t.details || ''}</td>
@@ -278,6 +280,11 @@ $(document).ready(function() {
                             </td>
                         </tr>
                     `;
+
+                    // Update running balance for next iteration by subtracting current transaction
+                    runningBalance -= (t.sellamount - t.paymentamount);
+
+                    return row;
                 }).join('');
 
                 $('#transactionsTable tbody').html(transactionRows || '<tr><td colspan="5" class="text-center">No transactions found</td></tr>');

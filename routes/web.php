@@ -73,13 +73,14 @@ Route::prefix('transictions')->name('transictions.')->group(function () {
     Route::get('/day-purchase', [TransictionsController::class, 'dayPurchase'])->name('day');
 });
 
-// Customer Purchases page
-Route::get('/customer/purchases', [TransictionsController::class, 'customerPurchasesPage'])->name('customer.purchases');
-// API for purchases of a customer
-Route::get('/customer/purchases/{customer}', [TransictionsController::class, 'customerPurchases']);
-
-// Customer Details route
-Route::get('/customer/{id}/details', [TransictionsController::class, 'customerDetails'])->name('customer.details');
+Route::prefix('customer')->name('customer.')->group(function () {
+    // Customer Purchases page
+    Route::get('/purchases', [TransictionsController::class, 'customerPurchasesPage'])->name('purchases');
+    // API for purchases of a customer
+    Route::get('/purchases/{customer}', [TransictionsController::class, 'customerPurchases']);
+    // Customer Details route
+    Route::get('/{id}/details', [TransictionsController::class, 'customerDetails'])->name('details');
+});
 
 
 // Authentication routes

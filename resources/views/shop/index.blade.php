@@ -46,8 +46,8 @@
                         <!-- Details Row -->
                         <div class="mb-3">
                             <label for="details" class="form-label">Details</label>
-                            <input type="text" class="form-control" id="details" name="details"
-                                placeholder="Details" required>
+                            <textarea class="form-control" id="details" name="details"
+                                placeholder="Details" required></textarea>
                         </div>
 
                         <!-- Amount Row -->
