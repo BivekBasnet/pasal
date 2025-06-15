@@ -11,6 +11,15 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Customer routes
+Route::get('/customers/add', [CustomersController::class, 'add'])->name('customers.add');
+Route::post('/customers/store', [CustomersController::class, 'store'])->name('customers.store');
+Route::get('/customers/list', [CustomersController::class, 'list'])->name('customers.list');
+Route::get('/customers/edit/{id}', [CustomersController::class, 'edit'])->name('customers.edit');
+Route::put('/customers/update/{id}', [CustomersController::class, 'update'])->name('customers.update');
+Route::delete('/customers/delete/{id}', [CustomersController::class, 'delete'])->name('customers.delete');
+
+
 Route::get('/home', function () {    // Today's statistics
     $todaysSales = \App\Models\transictions::whereDate('created_at', now())->sum('sellamount');
     $todaysPayments = \App\Models\transictions::whereDate('created_at', now())->sum('paymentamount');

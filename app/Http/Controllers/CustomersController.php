@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\transictions;
 use App\Models\Customers;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CustomersController extends Controller
 {
@@ -42,16 +43,43 @@ class CustomersController extends Controller
         return view('shop.edit', compact('customer'));
     }
 
-    function update(Request $request, $id){
-        $request->validate([
+    public function update(Request $request, $id)
+    {
+        $customer = Customers::findOrFail($id);
+
+        // Always validate name
+        $rules = [
             'c_name' => 'required|string|max:255',
-            'phone' => 'required|digits:10|unique:customers,phone,' . $id,
+        ];
+
+        // If phone number is changed, validate it
+        if ($request->phone != $customer->phone) {
+            $rules['phone'] = [
+                'required',
+                'digits:10',
+                Rule::unique('customers')->ignore($customer->id)
+            ];
+        } else {
+            // If phone is not changed, just make sure it's provided
+            $rules['phone'] = 'required|digits:10';
+        }
+
+        $validated = $request->validate($rules, [
+            'phone.unique' => 'This phone number is already registered with another customer.'
         ]);
-        $customers = Customers::findOrFail($id);
-        $customers->c_name = $request->c_name;
-        $customers->phone = $request->phone;
-        $customers->save();
-        return redirect()->route('customers.list');
+
+        // Update the customer
+        $customer->c_name = $request->c_name;
+        if ($request->phone != $customer->phone && !Customers::where('phone', $request->phone)->exists()) {
+            $customer->phone = $request->phone;
+        } elseif ($request->phone == $customer->phone) {
+            // If phone number hasn't changed, keep it
+            $customer->phone = $request->phone;
+        }
+
+        $customer->save();
+
+        return redirect()->route('customers.list')->with('success', 'Customer updated successfully');
     }
     public function delete($id)
     {

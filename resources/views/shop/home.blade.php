@@ -9,7 +9,6 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="mb-0">Dashboard</h2>
-                <div class="text-muted">{{ date('l, F j, Y') }}</div>
             </div>
         </div>
 
@@ -21,6 +20,7 @@
                     <span class="badge bg-light text-primary">{{ $todaysTransactions }} Transactions</span>
                 </div>
                 <div class="card-body">
+                    <div class="fw-bold text-center mb-3">{{ date('l, F j, Y') }}</div>
                     <div class="row g-4">
                         <div class="col-md-4">
                             <div class="p-3 bg-light rounded">
