@@ -92,3 +92,5 @@ Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->
 Route::get('/register', [App\Http\Controllers\AuthController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
 
+
+Route::post('/custom', [App\Http\Controllers\CustomersController::class, 'custom'])->name('custom');

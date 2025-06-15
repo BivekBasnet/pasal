@@ -29,11 +29,12 @@
                         <div class="row g-2 mb-3">
                             <div class="col-8">
                                 <label for="customer_id" class="form-label">Customer</label>
-                                <select name="customer_id" id="customer_id" class="form-select form-select-sm" required>
+                                <select name="customer_id" id="customer_id" class="form-select form-select-sm" required >
                                     <option value="">-- Select Customer --</option>
                                     @foreach($customers as $customer)
                                         <option value="{{ $customer->id }}">{{ $customer->c_name }}</option>
                                     @endforeach
+
                                 </select>
                             </div>
                             <div class="col-4">
@@ -194,32 +195,94 @@ $(document).ready(function() {
     $('#customer_id').select2({
         theme: 'bootstrap-5',
         width: '100%',
-        placeholder: "Select a customer"
+        placeholder: "Select a customer",
+        tags: true,
+        createTag: function(params) {
+            return {
+                id: 'new:' + params.term,
+                text: params.term,
+                newTag: true
+            }
+        },
+        templateResult: function(data) {
+            var $result = $("<span></span>");
+            if (data.newTag) {
+                $result.append('<i class="fas fa-plus-circle me-2"></i>Create new customer: "' + data.text + '"');
+            } else {
+                $result.text(data.text);
+            }
+            return $result;
+        }
     });
 
-    // Form submission handling
-    $('#transictionForm').on('submit', function(e) {
-        e.preventDefault();
-        const form = e.target;
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
+    // Find the Select2 'select2:select' event handler and replace it with this:
 
-        axios.post(form.action, new FormData(form))
-            .then(response => {
-                location.reload();
-            })
-            .catch(error => {
-                submitBtn.disabled = false;
-                if (error.response?.data?.errors) {
-                    let errorHtml = '<div class="alert alert-danger"><ul class="mb-0">';
-                    Object.values(error.response.data.errors).forEach(errors => {
-                        errors.forEach(error => errorHtml += `<li>${error}</li>`);
-                    });
-                    errorHtml += '</ul></div>';
-                    form.insertAdjacentHTML('afterbegin', errorHtml);
-                }
-            });
-    });
+$('#customer_id').on('select2:select', function(e) {
+    var data = e.params.data;
+    if (data.newTag) {
+        // Show confirmation dialog with phone number prompt
+        const customerName = data.text;
+        let phoneNumber = prompt('Enter 10-digit phone number for ' + customerName + ':');
+
+        // Validate phone number
+        if (phoneNumber) {
+            // Remove any non-digit characters
+            phoneNumber = phoneNumber.replace(/\D/g, '');
+
+            if (phoneNumber.length !== 10) {
+                alert('Please enter a valid 10-digit phone number');
+                $('#customer_id').val('').trigger('change');
+                return;
+            }
+
+            if (confirm('Do you want to create a new customer?\nName: ' + customerName + '\nPhone: ' + phoneNumber)) {
+                // Create new customer via AJAX
+                axios.post('/custom', {
+                    c_name: customerName,
+                    phone: phoneNumber,
+                    _token: '{{ csrf_token() }}'
+                })
+                .then(function(response) {
+                    // Replace the temporary option with the new customer
+                    var newOption = new Option(response.data.c_name, response.data.id, true, true);
+                    $('#customer_id').append(newOption).trigger('change');
+                })
+                .catch(function(error) {
+                    alert('Failed to create new customer. Please try again.');
+                    $('#customer_id').val('').trigger('change');
+                });
+            } else {
+                $('#customer_id').val('').trigger('change');
+            }
+        } else {
+            $('#customer_id').val('').trigger('change');
+        }
+    }
+});
+
+    // // Form submission handling
+    // $('#transictionForm').on('submit', function(e) {
+    //     e.preventDefault();
+    //     const form = e.target;
+    //     const submitBtn = document.getElementById('submitBtn');
+    //     submitBtn.disabled = true;
+
+    //     axios.post(form.action, new FormData(form))
+    //         .then(response => {
+    //             location.reload();
+    //         })
+    //         .catch(error => {
+    //             submitBtn.disabled = false;
+    //             if (error.response?.data?.errors) {
+    //                 let errorHtml = '<div class="alert alert-danger"><ul class="mb-0">';
+    //                 Object.values(error.response.data.errors).forEach(errors => {
+    //                     errors.forEach(error => errorHtml += `<li>${error}</li>`);
+    //                 });
+    //                 errorHtml += '</ul></div>';
+    //                 form.insertAdjacentHTML('afterbegin', errorHtml);
+    //             }
+    //         });
+    // });
 
     // Auto-dismiss alerts after 3 seconds
     setTimeout(function() {

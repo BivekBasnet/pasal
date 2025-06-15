@@ -24,6 +24,7 @@ class CustomersController extends Controller
         $customers->c_name = $request->c_name;
         $customers->phone = $request->phone;
         $customers->save();
+
         return redirect()->back();
     }
 
@@ -60,4 +61,16 @@ class CustomersController extends Controller
         }
     return redirect()->back();
     }
+
+    public function custom(Request $request)
+{
+    $validated = $request->validate([
+        'c_name' => 'required|string|max:255',
+        'phone' => 'required|string|size:10|regex:/^[0-9]+$/'
+    ]);
+
+    $customers = Customers::create($validated);
+
+    return response()->json($customers);
+}
 }
