@@ -20,37 +20,51 @@
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
             <form id="transictionForm" method="POST" action="{{ route('transictions.store') }}" autocomplete="on">
-
                 @csrf
 
-                <div class="mb-3">
-                    <label for="customer_id" class="form-label">Customer</label>
-                    <select name="customer_id" id="customer_id" class="form-select" required>
-                        <option value="">-- Select Customer --</option>
-                        @foreach($customers as $customer)
-                            <option value="{{ $customer->id }}">{{ $customer->c_name }}</option>
-                        @endforeach
-                    </select>
+                <!-- Customer and Date Row -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-7">
+                        <label for="customer_id" class="form-label">Customer</label>
+                        <select name="customer_id" id="customer_id" class="form-select" required>
+                            <option value="">-- Select Customer --</option>
+                            @foreach($customers as $customer)
+                                <option value="{{ $customer->id }}">{{ $customer->c_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="date" name="date"
+                               value="{{ old('date', $today ?? date('Y-m-d')) }}" required>
+                    </div>
                 </div>
 
+                <!-- Details Row -->
                 <div class="mb-3">
                     <label for="details" class="form-label">Details</label>
-                    <input type="text" class="form-control" id="details" name="details" placeholder="Details" required>
+                    <input type="text" class="form-control" id="details" name="details"
+                           placeholder="Details" required>
                 </div>
 
-                <div class="mb-3">
-                    <label for="sellamount" class="form-label">Sell Amount</label>
-                    <input type="number" class="form-control" id="sellamount" name="sellamount" placeholder="Sell Amount" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="paymentamount" class="form-label">Payment Amount</label>
-                    <input type="number" class="form-control" id="paymentamount" name="paymentamount" placeholder="Payment Amount" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="date" class="form-label">Date</label>
-                    <input type="date" class="form-control" id="date" name="date" value="{{ old('date', $today ?? date('Y-m-d')) }}" required>
+                <!-- Amount Row -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="sellamount" class="form-label">Sell Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₨</span>
+                            <input type="number" class="form-control" id="sellamount"
+                                   name="sellamount" placeholder="0.00" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="paymentamount" class="form-label">Payment Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₨</span>
+                            <input type="number" class="form-control" id="paymentamount"
+                                   name="paymentamount" placeholder="0.00" step="0.01" required>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="d-grid">
@@ -99,7 +113,40 @@
         </div>
     </div>
 </div>
-@endsection
+
+@push('css')
+<style>
+/* Responsive Adjustments */
+@media (max-width: 767.98px) {
+    .card-body {
+        padding: 1.25rem !important;
+    }
+    .input-group > .form-control {
+        min-width: 0;
+    }
+    .table {
+        font-size: 0.875rem;
+    }
+    th, td {
+        white-space: nowrap;
+    }
+}
+
+/* Select2 Mobile Fixes */
+.select2-container--default .select2-selection--single {
+    height: 38px;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 38px;
+    padding-left: 12px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px;
+}
+</style>
+@endpush
 
 @push('scripts')
 <script>
