@@ -113,53 +113,21 @@
         z-index: 1050;
         transform: translateX(0);
         transition: transform 0.3s ease-in-out;
+        height: 100%;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .sidebar.active {
         transform: translateX(280px);
     }
-}
-</style>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const sidebar = document.getElementById('sidebarMenu');
-    const toggleBtn = document.getElementById('sidebarToggle');
-
-    if (toggleBtn && sidebar) {
-        toggleBtn.addEventListener('click', function(event) {
-            event.stopPropagation();
-            sidebar.classList.toggle('active');
-            toggleBtn.innerText = sidebar.classList.contains('active') ? '✖ Close' : '☰ Menu';
-        });
+    .nav-link {
+        padding: 1rem;
     }
 
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener('click', function(event) {
-        if (window.innerWidth < 768
-            && sidebar
-            && sidebar.classList.contains('active')
-            && !sidebar.contains(event.target)
-            && event.target !== toggleBtn) {
-            sidebar.classList.remove('active');
-            if (toggleBtn) {
-                toggleBtn.innerText = '☰ Menu';
-            }
-        }
-    });
-
-    // Handle window resize
-    let resizeTimer;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function() {
-            if (window.innerWidth >= 768 && sidebar) {
-                sidebar.classList.remove('active');
-                if (toggleBtn) {
-                    toggleBtn.innerText = '☰ Menu';
-                }
-            }
-        }, 250);
-    });
-});
-</script>
+    .nav-icon {
+        font-size: 1.5rem;
+    }
+}
+</style>

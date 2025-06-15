@@ -46,7 +46,10 @@ class TransictionsController extends Controller
 
     function list()
     {
-        $transictions = transictions::with('customer')->get();
+        $transictions = transictions::with('customer')
+            ->orderBy('date', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('shop.purchaselist', compact('transictions'));
     }
 

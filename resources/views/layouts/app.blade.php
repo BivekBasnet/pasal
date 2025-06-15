@@ -21,6 +21,7 @@
         body {
             overflow-x: hidden;
             min-height: 100vh;
+            padding-top: 0 !important;
         }
         .main-wrapper {
             min-height: 100vh;
@@ -39,37 +40,25 @@
             flex-direction: column;
             padding: 1rem;
         }
-        .sidebar-toggle {
+        #sidebarToggle {
             position: fixed;
             top: 1rem;
             left: 1rem;
             z-index: 1100;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
+            padding: 8px 12px;
+            border-radius: 4px;
             background-color: #6f42c1;
             color: white;
             border: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
+            display: none;
+            font-size: 1.25rem;
+            line-height: 1;
+            cursor: pointer;
         }
-        .sidebar-toggle:hover {
+        #sidebarToggle:hover {
             background-color: #5a32a3;
-        }
-        @media (min-width: 768px) {
-            .sidebar-toggle {
-                display: none;
-            }
-        }
-        @media (max-width: 767.98px) {
-            .main-content {
-                padding-top: 4rem;
-            }
-            .content-center {
-                min-height: calc(100vh - 5rem);
-            }
-        }
-        .card {
-            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
         }
         .overlay {
             display: none;
@@ -80,11 +69,28 @@
             bottom: 0;
             background: rgba(0,0,0,0.5);
             z-index: 1040;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .overlay.show {
+            opacity: 1;
         }
         @media (max-width: 767.98px) {
+            #sidebarToggle {
+                display: block;
+            }
+            .main-content {
+                padding-top: 4rem;
+            }
+            .content-center {
+                min-height: calc(100vh - 5rem);
+            }
             .overlay.active {
                 display: block;
             }
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
         }
         @yield('css')
     </style>
@@ -100,10 +106,7 @@
             </div>
         </div>
     @else
-        <button id="sidebarToggle" class="sidebar-toggle d-md-none">
-            <span class="navbar-toggler-icon">☰</span>
-        </button>
-
+        <button type="button" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
         <div class="overlay" id="sidebarOverlay"></div>
 
         <div class="main-wrapper">
@@ -129,49 +132,53 @@
     @endif
 
     @stack('scripts')
+
+    @if (!in_array(Route::currentRouteName(), ['login', 'register']))
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.getElementById('sidebarMenu');
-            const toggle = document.getElementById('sidebarToggle');
-            const overlay = document.getElementById('sidebarOverlay');
+    $(document).ready(function() {
+        const $sidebar = $('#sidebarMenu');
+        const $toggle = $('#sidebarToggle');
+        const $overlay = $('#sidebarOverlay');
 
-            function toggleSidebar() {
-                sidebar.classList.toggle('active');
-                overlay.classList.toggle('active');
-                toggle.innerHTML = sidebar.classList.contains('active') ? '✖' : '☰';
+        function toggleSidebar() {
+            $sidebar.toggleClass('active');
+            $overlay.toggleClass('active');
+            if ($sidebar.hasClass('active')) {
+                $toggle.html('✖');
+                setTimeout(() => $overlay.addClass('show'), 50);
+            } else {
+                $toggle.html('☰');
+                $overlay.removeClass('show');
             }
+        }
 
-            if (toggle) {
-                toggle.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    toggleSidebar();
-                });
-            }
-
-            if (overlay) {
-                overlay.addEventListener('click', function() {
-                    toggleSidebar();
-                });
-            }
-
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth < 768 &&
-                    !sidebar.contains(e.target) &&
-                    !toggle.contains(e.target) &&
-                    sidebar.classList.contains('active')) {
-                    toggleSidebar();
-                }
-            });
-
-            // Set active nav item
-            const currentPath = window.location.pathname;
-            document.querySelectorAll('.nav-link').forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
-                    link.parentElement.classList.add('active');
-                }
-            });
+        $toggle.on('click', function(e) {
+            e.stopPropagation();
+            toggleSidebar();
         });
+
+        $overlay.on('click', function() {
+            toggleSidebar();
+        });
+
+        $(document).on('click', function(e) {
+            if ($(window).width() < 768 &&
+                $sidebar.hasClass('active') &&
+                !$(e.target).closest('#sidebarMenu').length &&
+                !$(e.target).closest('#sidebarToggle').length) {
+                toggleSidebar();
+            }
+        });
+
+        $(window).on('resize', function() {
+            if ($(window).width() >= 768 && $sidebar.hasClass('active')) {
+                $sidebar.removeClass('active');
+                $overlay.removeClass('active show');
+                $toggle.html('☰');
+            }
+        });
+    });
     </script>
+    @endif
 </body>
 </html>
