@@ -235,25 +235,49 @@ $('#customer_id').on('select2:select', function(e) {
                 return;
             }
 
-            if (confirm('Do you want to create a new customer?\nName: ' + customerName + '\nPhone: ' + phoneNumber)) {
-                // Create new customer via AJAX
-                axios.post('/custom', {
-                    c_name: customerName,
-                    phone: phoneNumber,
-                    _token: '{{ csrf_token() }}'
-                })
-                .then(function(response) {
-                    // Replace the temporary option with the new customer
-                    var newOption = new Option(response.data.c_name, response.data.id, true, true);
-                    $('#customer_id').append(newOption).trigger('change');
-                })
-                .catch(function(error) {
-                    alert('Failed to create new customer. Please try again.');
+            // Check if phone number exists
+            axios.post('/check-phone', {
+                phone: phoneNumber,
+                _token: '{{ csrf_token() }}'
+            })
+            .then(function(response) {
+                if (response.data.exists) {
+                    alert('This phone number is already registered with another customer!');
                     $('#customer_id').val('').trigger('change');
-                });
-            } else {
+                    return;
+                }
+
+                if (confirm('Do you want to create a new customer?\nName: ' + customerName + '\nPhone: ' + phoneNumber)) {
+                    // Create new customer via AJAX
+                    axios.post('/custom', {
+                        c_name: customerName,
+                        phone: phoneNumber,
+                        _token: '{{ csrf_token() }}'
+                    })
+                    .then(function(response) {
+                        if (response.data.success) {
+                            var newCustomer = response.data.customer;
+                            // Create the new option and add it to the select
+                            var newOption = new Option(newCustomer.c_name, newCustomer.id, true, true);
+                            $('#customer_id')
+                                .append(newOption)
+                                .val(newCustomer.id)
+                                .trigger('change');
+                            alert('Customer created successfully!');
+                        }
+                    })
+                    .catch(function(error) {
+                        alert('Failed to create new customer. Please try again.');
+                        $('#customer_id').val('').trigger('change');
+                    });
+                } else {
+                    $('#customer_id').val('').trigger('change');
+                }
+            })
+            .catch(function(error) {
+                alert('Failed to check phone number. Please try again.');
                 $('#customer_id').val('').trigger('change');
-            }
+            });
         } else {
             $('#customer_id').val('').trigger('change');
         }

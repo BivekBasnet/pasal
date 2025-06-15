@@ -63,14 +63,36 @@ class CustomersController extends Controller
     }
 
     public function custom(Request $request)
-{
-    $validated = $request->validate([
-        'c_name' => 'required|string|max:255',
-        'phone' => 'required|string|size:10|regex:/^[0-9]+$/'
-    ]);
+    {
+        $validated = $request->validate([
+            'c_name' => 'required|string|max:255',
+            'phone' => 'required|string|size:10|regex:/^[0-9]+$/'
+        ]);
 
-    $customers = Customers::create($validated);
+        $customers = Customers::create($validated);
 
-    return response()->json($customers);
-}
+        return response()->json([
+            'success' => true,
+            'customer' => $customers
+        ]);
+    }
+
+    // Add a method to check phone existence
+    public function checkPhone(Request $request)
+    {
+        $exists = Customers::where('phone', $request->phone)->exists();
+        return response()->json(['exists' => $exists]);
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $customer = Customers::findOrFail($id);
+            $customer->delete();
+
+            return redirect()->back()->with('success', 'Customer and all related transactions deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete customer');
+        }
+    }
 }

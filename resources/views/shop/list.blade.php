@@ -30,8 +30,12 @@
                                             <a href="{{ route('customers.edit', $customer->id) }}" class="btn btn-warning btn-sm">Edit</a>
                                         </td>
                                         <td>
-                                            <form action="{{ route('customers.delete', $customer->id) }}" method="GET" style="display:inline;">
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this customer?');">Delete</button>
+                                            <form action="{{ route('customers.destroy', $customer->id) }}" method="POST" style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this customer? All their transactions will also be deleted.')">
+                                                    Delete
+                                                </button>
                                             </form>
                                         </td>
                                     </tr>

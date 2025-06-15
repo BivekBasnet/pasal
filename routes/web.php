@@ -94,3 +94,7 @@ Route::post('/register', [App\Http\Controllers\AuthController::class, 'register'
 
 
 Route::post('/custom', [App\Http\Controllers\CustomersController::class, 'custom'])->name('custom');
+
+Route::post('/check-phone', [App\Http\Controllers\CustomersController::class, 'checkPhone'])->name('customers.checkPhone');
+
+Route::delete('/customers/{id}', [App\Http\Controllers\CustomersController::class, 'destroy'])->name('customers.destroy');
